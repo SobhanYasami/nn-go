@@ -4,11 +4,16 @@ import (
 	"fmt"
 
 	"github.com/SobhanYasami/nn-go/internal/nn"
+	"github.com/SobhanYasami/nn-go/pkg/logger"
 )
 
 func main() {
+	log := logger.New("main", logger.DEBUG)
+
+	log.Info("Starting mini neural network demo...")
+
 	// Example input batch (3 samples, 4 features)
-	inputs := [][]float64{
+	X := [][]float64{
 		{1.0, 2.0, 3.0, 2.5},
 		{2.0, 5.0, -1.0, 2.0},
 		{-1.5, 2.7, 3.3, -0.8},
@@ -18,6 +23,8 @@ func main() {
 	model.AddLayer(4, 3) // input_size=4, output_size=3
 	model.AddLayer(3, 3) // second layer
 
-	outputs := model.Forward(inputs)
+	outputs := model.Forward(X)
+	log.Debug("Forward pass completed, outputs: %+v", outputs)
+
 	fmt.Println("Final outputs:", outputs)
 }
