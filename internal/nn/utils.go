@@ -8,9 +8,9 @@ import (
 // NumGo provides basic numerical and linear algebra operations.
 type NumGo struct{}
 
-// --------------------
-// Scalar Operations
-// --------------------
+//? --------------------
+//? Scalar Operations
+//? --------------------
 
 // RoundTo rounds a float64 value x to the specified number of decimal digits.
 func (ng *NumGo) RoundTo(x float64, digits int) float64 {
@@ -21,9 +21,9 @@ func (ng *NumGo) RoundTo(x float64, digits int) float64 {
 	return math.Round(x*pow) / pow
 }
 
-// --------------------
-// Vector Operations
-// --------------------
+//? --------------------
+//? Vector Operations
+//? --------------------
 
 // DotVectors computes the dot product of two vectors.
 func (ng *NumGo) DotVectors(v1, v2 []float64) (float64, error) {
@@ -92,12 +92,12 @@ func (ng *NumGo) Normalize(v []float64) []float64 {
 	return result
 }
 
-// --------------------
-// Matrix Operations
-// --------------------
+//? --------------------
+//? Matrix Operations
+//? --------------------
 
 // MatrixMul performs matrix multiplication A (m×n) * B (n×p) = C (m×p).
-func (ng *NumGo) MatrixMul(A, B [][]float64) ([][]float64, error) {
+func (ng *NumGo) DotMatrix(A, B [][]float64) ([][]float64, error) {
 	if len(A) == 0 || len(B) == 0 {
 		return nil, errors.New("MatrixMul: empty matrix")
 	}
