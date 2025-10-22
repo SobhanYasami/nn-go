@@ -32,10 +32,16 @@ func main() {
 	// Perform Forward pass to next layer
 	dl1Output, _ := layer_1.Forward(X)
 
-	fmt.Println("new layer weights is:", layer_1.Weights)
-	fmt.Println("new layer biases is:", layer_1.Biases)
-
 	fmt.Println("===================")
+	fmt.Println("output of layer1:", dl1Output)
+	fmt.Println("===================")
+
+	//	Pass output of first layer to Activation function
+	af := nn.ActivationFn{}
+
+	_ = af.ReLUInPlace(dl1Output)
+	fmt.Println("In-place:", dl1Output) // [[0 3.4 0] [2.1 0 0]]
+
 	fmt.Println("output of layer1:", dl1Output)
 
 	//

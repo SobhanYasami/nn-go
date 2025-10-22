@@ -92,6 +92,23 @@ func (ng *NumGo) Normalize(v []float64) []float64 {
 	return result
 }
 
+// MaxVector returns elementwise maximum between two float64 slices (like np.maximum).
+func MaxVector(a, b []float64) ([]float64, error) {
+	if len(a) != len(b) {
+		return nil, errors.New("vectors must have the same length")
+	}
+
+	result := make([]float64, len(a))
+	for i := range a {
+		if a[i] > b[i] {
+			result[i] = a[i]
+		} else {
+			result[i] = b[i]
+		}
+	}
+	return result, nil
+}
+
 //? --------------------
 //? Matrix Operations
 //? --------------------
@@ -133,4 +150,27 @@ func (ng *NumGo) Transpose(M [][]float64) [][]float64 {
 		}
 	}
 	return T
+}
+
+// MaxMatrix returns elementwise maximum between two 2D slices (matrices).
+func MaxMatrix(a, b [][]float64) ([][]float64, error) {
+	if len(a) != len(b) {
+		return nil, errors.New("matrices must have the same number of rows")
+	}
+
+	result := make([][]float64, len(a))
+	for i := range a {
+		if len(a[i]) != len(b[i]) {
+			return nil, errors.New("matrices must have the same number of columns")
+		}
+		result[i] = make([]float64, len(a[i]))
+		for j := range a[i] {
+			if a[i][j] > b[i][j] {
+				result[i][j] = a[i][j]
+			} else {
+				result[i][j] = b[i][j]
+			}
+		}
+	}
+	return result, nil
 }
