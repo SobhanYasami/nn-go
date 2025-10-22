@@ -1,20 +1,67 @@
-## Inroduction
+# Neural Network from Scratch in Go
 
-this a package written in golang to implement neural network from scratch
+## 🧠 Introduction
 
-## How multi-layer neural network works
+This package is written in **Go (Golang)** and implements a **neural network from scratch** — without using any external machine learning frameworks.  
+It’s designed to help you understand the mathematical foundations behind feed-forward neural networks, matrix operations, and forward propagation.
 
-X is batach of inputs with (n\*m) dimension which:
-n: number of samples
-m: number of features
+---
 
-B: bias vector with dimension of n\*1
+## ⚙️ How a Multi-Layer Neural Network Works
 
-W_layer1 is matrix for 4 neurons with n\*m so output of first layer is
+A neural network consists of **layers of neurons**, each performing a mathematical transformation on the input data.
 
-output1 = dotProduct(X,W_layer1_T)+B1
+### 🔢 Inputs
 
-for second layer we have:
-output2 = dotProduct(output1,W_layer2_T) + B2
+Let **X** be a batch of input samples with shape **(n × m)**:
 
-and so on.
+- **n** → number of samples
+- **m** → number of features per sample
+
+### ⚖️ Biases and Weights
+
+Each layer has:
+
+- A **weight matrix** `W` of shape **(k × m)**, where _k_ is the number of neurons in the layer.
+- A **bias vector** `B` of shape **(k × 1)**, which shifts the activation values.
+
+### 🔁 Forward Pass
+
+For the **first layer**:
+output₁ = dot(X, W₁ᵀ) + B₁
+
+For the **second layer**:
+output₂ = dot(output₁, W₂ᵀ) + B₂
+
+This process continues for each layer, passing the output of one layer as the input to the next.  
+Finally, an **activation function** (such as ReLU, sigmoid, or softmax) can be applied to introduce non-linearity.
+
+---
+
+## 🧩 Example Architecture
+
+Input (4 features)
+↓
+Dense Layer (3 neurons)
+↓
+Dense Layer (3 neurons)
+↓
+Output
+
+Each layer performs a matrix multiplication followed by bias addition and optional activation.
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# Clone this repository
+git clone https://github.com/your-username/nn-go.git
+
+cd nn-go
+
+# Run example
+go run ./cmd
+
+
+```
