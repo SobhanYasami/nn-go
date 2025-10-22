@@ -18,4 +18,5 @@ require (
 	golang.org/x/tools v0.38.0 // indirect
 	gonum.org/v1/gonum v0.16.0 // indirect
 	gonum.org/v1/plot v0.16.0 // indirect
+	rsc.io/pdf v0.1.1 // indirect
 )

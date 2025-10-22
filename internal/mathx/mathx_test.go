@@ -1,4 +1,4 @@
-package nn
+package mathx
 
 import (
 	"math"

@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/SobhanYasami/nn-go/internal/nn"
+	dataset "github.com/SobhanYasami/nn-go/internal/data"
+	"github.com/SobhanYasami/nn-go/internal/mathx"
+	"github.com/SobhanYasami/nn-go/internal/utils"
 	"github.com/SobhanYasami/nn-go/pkg/logger"
 )
 
@@ -12,8 +14,17 @@ func main() {
 
 	log.Info("Starting mini neural network demo...")
 
+	// Create dataset
+	X1, y := dataset.CreateData(100, 3)
+	fmt.Println("Generated", len(X1), "points")
+
+	if err := utils.PlotData(X1, y, 3, "spiral.png"); err != nil {
+		panic(err)
+	}
+	fmt.Println("Plot saved as spiral.png")
+
 	// initialize Numgo
-	ng := &nn.NumGo{}
+	ng := &mathx.NumGo{}
 
 	//? Inputs
 	X := [][]float64{
