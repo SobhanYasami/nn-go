@@ -14,38 +14,54 @@ func main() {
 
 	// initialize Numgo
 	ng := &nn.NumGo{}
-	// debug: example  ==========
-	v1 := []float64{1, 2, 3}
-	v2 := []float64{4, 5, 6}
 
-	dot, _ := ng.DotVectors(v1, v2)
-	fmt.Println("Dot:", dot) // 32
-
-	sum, _ := ng.AddVectors(v1, v2)
-	fmt.Println("Sum:", sum) // [5 7 9]
-
-	norm := ng.Norm(v1)
-	fmt.Println("Norm:", norm) // 3.741...
-
-	A := [][]float64{{1, 2}, {3, 4}}
-	B := [][]float64{{5, 6}, {7, 8}}
-	C, _ := ng.DotMatrix(A, B)
-	fmt.Println("MatrixDotProduct:", C)
-	// debug: End of Testing
-
-	// Example input batch (3 samples, 4 features)
+	//? Inputs
 	X := [][]float64{
 		{1.0, 2.0, 3.0, 2.5},
 		{2.0, 5.0, -1.0, 2.0},
 		{-1.5, 2.7, 3.3, -0.8},
 	}
 
-	model := nn.NewModel()
-	model.AddLayer(4, 3) // input_size=4, output_size=3
-	model.AddLayer(3, 3) // second layer
+	//? Weights for layers
+	W := [][]float64{
+		{0.2, 0.8, -0.5, 1.0},
+		{0.5, -0.91, 0.26, -0.5},
+		{-0.26, -0.27, 0.17, 0.87},
+	}
+	W2 := [][]float64{
+		{0.1, -0.14, 0.5},
+		{-0.5, 0.12, -0.33},
+		{-0.44, 0.73, -0.13},
+	}
+	//? Biases
+	B := []float64{2.0, 3.0, 0.5}
+	B2 := []float64{-1.0, 2.0, -0.5}
 
-	outputs := model.Forward(X)
-	log.Debug("Forward pass completed, outputs: %+v", outputs)
+	// First Layer
+	batchW1, err := ng.DotMatrix(X, ng.Transpose(W))
+	if err != nil {
+		log.Error("DotMatrix failed:", err)
+		return
+	}
+	// Add biases
+	output1 := make([][]float64, len(batchW1))
+	for i, op := range batchW1 {
+		output1[i], _ = ng.AddVectors(op, B)
+	}
 
-	fmt.Println("Final outputs:", outputs)
+	// Second Layer
+	batchW2, err := ng.DotMatrix(output1, ng.Transpose(W2))
+	if err != nil {
+		log.Error("DotMatrix failed:", err)
+		return
+	}
+	output2 := make([][]float64, len(batchW2))
+	for i, op := range batchW2 {
+		output2[i], _ = ng.AddVectors(op, B2)
+	}
+
+	fmt.Println("output of first layer is:\n", output1)
+	fmt.Println("===========================================")
+	fmt.Println("output of second layer is:\n", output2)
+
 }
