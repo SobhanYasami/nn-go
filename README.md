@@ -56,7 +56,7 @@ Each layer performs a matrix multiplication followed by bias addition and option
 
 ```bash
 # Clone this repository
-git clone https://github.com/your-username/nn-go.git
+git clone https://github.com/SobhanYasami/nn-go.git
 
 cd nn-go
 
