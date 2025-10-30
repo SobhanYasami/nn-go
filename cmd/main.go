@@ -13,7 +13,7 @@ import (
 
 func main() {
 	log := logger.New("main", logger.DEBUG)
-	log.Info("Starting random search neural network demo...")
+	log.Info("Starting hill climbing neural network demo...")
 
 	start := time.Now()
 
@@ -42,61 +42,98 @@ func main() {
 		layers[i] = layer
 	}
 
-	// --- Step 4: Random search ---
+	// --- Step 4: Evaluate initial loss ---
+	initialLoss := computeLoss(X, y, layers, &af, &lf)
+	bestLoss := initialLoss
+	fmt.Printf("Initial loss: %.6f\n", bestLoss)
+
+	// --- Step 5: Hill climbing optimization ---
 	rand.Seed(time.Now().UnixNano())
-	bestLoss := 1e9
-	bestIter := -1
+	bestWeights := cloneNetwork(layers)
 
 	numIterations := 100000
-	fmt.Printf("🚀 Running random search for %d iterations...\n", numIterations)
+	learningRate := 0.05
+
+	fmt.Printf("🚀 Running hill climbing for %d iterations...\n", numIterations)
 
 	for iter := 0; iter < numIterations; iter++ {
-		// Randomize all weights and biases
-		for _, layer := range layers {
-			for i := range layer.Weights {
-				for j := range layer.Weights[i] {
-					layer.Weights[i][j] = rand.NormFloat64() * 0.01 // small Gaussian noise
-				}
-			}
-			for i := range layer.Biases {
-				layer.Biases[i] = rand.NormFloat64() * 0.01
-			}
-		}
+		// Perturb weights and biases slightly
+		perturbNetwork(layers, learningRate)
 
-		// Forward pass
-		input := X
-		for i, layer := range layers {
-			output, _ := layer.Forward(input)
-			if i < len(layers)-1 {
-				_ = af.ReLUInPlace(output)
-			}
-			input = output
-		}
+		// Compute new loss
+		newLoss := computeLoss(X, y, layers, &af, &lf)
 
-		// Apply final softmax
-		_ = af.SoftmaxInPlace(input)
-
-		// Compute loss
-		loss, err := lf.CategoricalCrossEntropy(input, y)
-		if err != nil {
-			log.Error("Error computing loss: %v", err)
-			return
-		}
-
-		// Track best loss
-		if loss < bestLoss {
-			bestLoss = loss
-			bestIter = iter
+		// Accept or revert
+		if newLoss < bestLoss {
+			bestLoss = newLoss
+			bestWeights = cloneNetwork(layers)
+		} else {
+			// Revert to previous best
+			restoreNetwork(layers, bestWeights)
 		}
 
 		// Occasionally print progress
 		if iter%5000 == 0 {
-			fmt.Printf("Iter %6d | Loss: %.6f | Best so far: %.6f (iter %d)\n",
-				iter, loss, bestLoss, bestIter)
+			fmt.Printf("Iter %6d | Loss: %.6f | Best so far: %.6f\n",
+				iter, newLoss, bestLoss)
 		}
 	}
 
-	fmt.Printf("\n🏁 Random search completed.\n")
-	fmt.Printf("🔹 Best loss: %.6f (found at iteration %d)\n", bestLoss, bestIter)
+	fmt.Printf("\n🏁 Optimization completed.\n")
+	fmt.Printf("🔹 Best loss: %.6f\n", bestLoss)
 	fmt.Printf("⏱️ Total runtime: %v\n", time.Since(start))
+}
+
+// ----------------- Helper functions -----------------
+
+func computeLoss(X [][]float64, y []int, layers []*nn.DenseLayer, af *nn.ActivationFn, lf *nn.LossFn) float64 {
+	input := X
+	for i, layer := range layers {
+		output, _ := layer.Forward(input)
+		if i < len(layers)-1 {
+			_ = af.ReLUInPlace(output)
+		}
+		input = output
+	}
+	_ = af.SoftmaxInPlace(input)
+	loss, _ := lf.CategoricalCrossEntropy(input, y)
+	return loss
+}
+
+func perturbNetwork(layers []*nn.DenseLayer, scale float64) {
+	for _, layer := range layers {
+		for i := range layer.Weights {
+			for j := range layer.Weights[i] {
+				layer.Weights[i][j] += rand.NormFloat64() * scale
+			}
+		}
+		for i := range layer.Biases {
+			layer.Biases[i] += rand.NormFloat64() * scale
+		}
+	}
+}
+
+func cloneNetwork(layers []*nn.DenseLayer) []*nn.DenseLayer {
+	clone := make([]*nn.DenseLayer, len(layers))
+	for i, layer := range layers {
+		newLayer := &nn.DenseLayer{
+			Weights: make([][]float64, len(layer.Weights)),
+			Biases:  make([]float64, len(layer.Biases)),
+		}
+		for j := range layer.Weights {
+			newLayer.Weights[j] = append([]float64(nil), layer.Weights[j]...)
+		}
+		copy(newLayer.Biases, layer.Biases)
+		clone[i] = newLayer
+	}
+	return clone
+}
+
+func restoreNetwork(layers []*nn.DenseLayer, saved []*nn.DenseLayer) {
+	for i := range layers {
+		for j := range layers[i].Weights {
+			copy(layers[i].Weights[j], saved[i].Weights[j])
+		}
+		copy(layers[i].Biases, saved[i].Biases)
+	}
 }
