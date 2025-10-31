@@ -55,7 +55,7 @@ func main() {
 	fmt.Printf("🚀 Running hill climbing for %d iterations...\n", numIterations)
 
 	learningRate := 0.01
-	epochs := 1000
+	epochs := 100000
 
 	for epoch := 0; epoch < epochs; epoch++ {
 		// Forward pass

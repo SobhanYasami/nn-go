@@ -6,19 +6,19 @@ import (
 	"time"
 )
 
-// DenseLayer represents a fully connected layer.
+// ? DenseLayer represents a fully connected layer.
 type DenseLayer struct {
 	Weights [][]float64
 	Biases  []float64
 
-	// Cache for backpropagation
+	//! Cache for backpropagation
 	Input    [][]float64
 	Output   [][]float64
 	DWeights [][]float64
 	DBiases  []float64
 }
 
-// NewDenseLayer creates a new dense layer.
+// ? NewDenseLayer creates a new dense layer.
 func NewDenseLayer(nInputs, nNeurons int) (*DenseLayer, error) {
 	if nInputs <= 0 || nNeurons <= 0 {
 		return nil, errors.New("inputs and neurons must be positive")
@@ -41,7 +41,11 @@ func NewDenseLayer(nInputs, nNeurons int) (*DenseLayer, error) {
 	}, nil
 }
 
-// Forward pass: store inputs and outputs for backprop.
+// ?
+//
+//	Forward pass: store inputs and outputs for backprop.
+//
+// ##
 func (dl *DenseLayer) Forward(X [][]float64) ([][]float64, error) {
 	if len(X) == 0 {
 		return nil, errors.New("empty input")
@@ -64,7 +68,9 @@ func (dl *DenseLayer) Forward(X [][]float64) ([][]float64, error) {
 	return output, nil
 }
 
+// ?
 // Backward pass: compute gradients.
+// ##
 func (dl *DenseLayer) Backward(dOutputs [][]float64, learningRate float64) [][]float64 {
 	batchSize := float64(len(dl.Input))
 

@@ -3,7 +3,12 @@
 ## 🧠 Introduction
 
 This package is written in **Go (Golang)** and implements a **neural network from scratch** — without using any external machine learning frameworks.  
-It’s designed to help you understand the mathematical foundations behind feed-forward neural networks, matrix operations, and forward propagation.
+It’s designed to help you understand the mathematical foundations behind:
+
+- **Feed-forward neural networks**
+- **Matrix operations**
+- **Forward and backward propagation**
+- **Gradient descent optimization**
 
 ---
 
@@ -34,7 +39,19 @@ For the **second layer**:
 output₂ = dot(output₁, W₂ᵀ) + B₂
 
 This process continues for each layer, passing the output of one layer as the input to the next.  
-Finally, an **activation function** (such as ReLU, sigmoid, or softmax) can be applied to introduce non-linearity.
+Finally, an **activation function** (such as ReLU or softmax) is applied to introduce non-linearity.
+
+### 🔄 Backward Pass
+
+During **backpropagation**:
+
+- Gradients of the loss with respect to weights and biases are computed.
+- Weights are updated using **gradient descent**:
+
+W := W - learning_rate _ dW
+B := B - learning_rate _ dB
+
+This allows the network to learn from errors.
 
 ---
 
@@ -42,13 +59,23 @@ Finally, an **activation function** (such as ReLU, sigmoid, or softmax) can be a
 
 Input (4 features)
 ↓
-Dense Layer (3 neurons)
+Dense Layer (3 neurons, ReLU)
 ↓
-Dense Layer (3 neurons)
+Dense Layer (3 neurons, ReLU)
 ↓
-Output
+Output (Softmax)
 
-Each layer performs a matrix multiplication followed by bias addition and optional activation.
+Each layer performs a **matrix multiplication**, adds biases, and applies an **activation function**.
+
+---
+
+## 📚 References
+
+- [NumPy Linear Algebra Documentation](https://numpy.org/doc/stable/reference/routines.linalg.html) — for understanding matrix operations
+- [Matrix Multiplication — Wikipedia](https://en.wikipedia.org/wiki/Matrix_multiplication) — mathematical foundation of forward pass
+- [Golang `math` Package Docs](https://pkg.go.dev/math) — Go’s standard math utilities
+- [Softmax Function — Wikipedia](https://en.wikipedia.org/wiki/Softmax_function) — for multi-class classification output
+- [Cross-Entropy Loss — Wikipedia](https://en.wikipedia.org/wiki/Cross_entropy) — loss function used for classification
 
 ---
 
@@ -60,8 +87,6 @@ git clone https://github.com/SobhanYasami/nn-go.git
 
 cd nn-go
 
-# Run example
+# Run the main example
 go run ./cmd
-
-
 ```
