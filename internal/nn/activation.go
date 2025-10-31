@@ -125,3 +125,16 @@ func (af *ActivationFn) Softmax(inputs [][]float64) ([][]float64, error) {
 	}
 	return output, nil
 }
+
+func (af *ActivationFn) ReLUBackward(dOutputs, inputs [][]float64) [][]float64 {
+	dInputs := make([][]float64, len(dOutputs))
+	for i := range dOutputs {
+		dInputs[i] = make([]float64, len(dOutputs[i]))
+		for j := range dOutputs[i] {
+			if inputs[i][j] > 0 {
+				dInputs[i][j] = dOutputs[i][j]
+			}
+		}
+	}
+	return dInputs
+}

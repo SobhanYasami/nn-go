@@ -44,3 +44,17 @@ func (lf *LossFn) CategoricalCrossEntropy(predictions [][]float64, yTrue []int) 
 	meanLoss := sumLoss / float64(len(predictions))
 	return meanLoss, nil
 }
+
+func (lf *LossFn) SoftmaxCrossEntropyBackward(predictions [][]float64, yTrue []int) [][]float64 {
+	samples := len(predictions)
+	dInputs := make([][]float64, samples)
+	for i := 0; i < samples; i++ {
+		dInputs[i] = make([]float64, len(predictions[i]))
+		copy(dInputs[i], predictions[i])
+		dInputs[i][yTrue[i]] -= 1.0
+		for j := range dInputs[i] {
+			dInputs[i][j] /= float64(samples)
+		}
+	}
+	return dInputs
+}

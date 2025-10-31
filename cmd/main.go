@@ -49,35 +49,61 @@ func main() {
 
 	// --- Step 5: Hill climbing optimization ---
 	rand.Seed(time.Now().UnixNano())
-	bestWeights := cloneNetwork(layers)
+	// bestWeights := cloneNetwork(layers)
 
 	numIterations := 100000
-	learningRate := 0.05
-
 	fmt.Printf("🚀 Running hill climbing for %d iterations...\n", numIterations)
 
-	for iter := 0; iter < numIterations; iter++ {
-		// Perturb weights and biases slightly
-		perturbNetwork(layers, learningRate)
+	learningRate := 0.01
+	epochs := 1000
 
-		// Compute new loss
-		newLoss := computeLoss(X, y, layers, &af, &lf)
+	for epoch := 0; epoch < epochs; epoch++ {
+		// Forward pass
+		input := X
+		for i, layer := range layers {
+			output, _ := layer.Forward(input)
+			if i < len(layers)-1 {
+				_ = af.ReLUInPlace(output)
+			}
+			input = output
+		}
+		_ = af.SoftmaxInPlace(input)
 
-		// Accept or revert
-		if newLoss < bestLoss {
-			bestLoss = newLoss
-			bestWeights = cloneNetwork(layers)
-		} else {
-			// Revert to previous best
-			restoreNetwork(layers, bestWeights)
+		// Compute loss
+		loss, _ := lf.CategoricalCrossEntropy(input, y)
+
+		// Backward pass
+		dInputs := lf.SoftmaxCrossEntropyBackward(input, y)
+		for i := len(layers) - 1; i >= 0; i-- {
+			if i < len(layers)-1 {
+				prev := layers[i].Output
+				dInputs = af.ReLUBackward(dInputs, prev)
+			}
+			dInputs = layers[i].Backward(dInputs, learningRate)
 		}
 
-		// Occasionally print progress
-		if iter%5000 == 0 {
-			fmt.Printf("Iter %6d | Loss: %.6f | Best so far: %.6f\n",
-				iter, newLoss, bestLoss)
+		if epoch%100 == 0 {
+			fmt.Printf("Epoch %4d | Loss: %.6f\n", epoch, loss)
 		}
 	}
+	// 	// Compute new loss
+	// 	newLoss := computeLoss(X, y, layers, &af, &lf)
+
+	// 	// Accept or revert
+	// 	if newLoss < bestLoss {
+	// 		bestLoss = newLoss
+	// 		bestWeights = cloneNetwork(layers)
+	// 	} else {
+	// 		// Revert to previous best
+	// 		restoreNetwork(layers, bestWeights)
+	// 	}
+
+	// 	// Occasionally print progress
+	// 	if iter%5000 == 0 {
+	// 		fmt.Printf("Iter %6d | Loss: %.6f | Best so far: %.6f\n",
+	// 			iter, newLoss, bestLoss)
+	// 	}
+	// }
 
 	fmt.Printf("\n🏁 Optimization completed.\n")
 	fmt.Printf("🔹 Best loss: %.6f\n", bestLoss)
