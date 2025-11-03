@@ -146,3 +146,26 @@ func TestTranspose(t *testing.T) {
 		t.Errorf("Transpose() = %v; want %v", got, want)
 	}
 }
+
+func TestNumGo_RoundTo(t *testing.T) {
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		x      float64
+		digits int
+		want   float64
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// TODO: construct the receiver type.
+			var ng NumGo
+			got := ng.RoundTo(tt.x, tt.digits)
+			// TODO: update the condition below to compare got with tt.want.
+			if true {
+				t.Errorf("RoundTo() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
