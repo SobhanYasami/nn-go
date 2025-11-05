@@ -51,11 +51,11 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 	// bestWeights := cloneNetwork(layers)
 
-	numIterations := 100000
+	numIterations := 1000
 	fmt.Printf("🚀 Running hill climbing for %d iterations...\n", numIterations)
 
 	learningRate := 0.01
-	epochs := 100000
+	epochs := 10000
 
 	for epoch := 0; epoch < epochs; epoch++ {
 		// Forward pass
@@ -86,24 +86,6 @@ func main() {
 			fmt.Printf("Epoch %4d | Loss: %.6f\n", epoch, loss)
 		}
 	}
-	// 	// Compute new loss
-	// 	newLoss := computeLoss(X, y, layers, &af, &lf)
-
-	// 	// Accept or revert
-	// 	if newLoss < bestLoss {
-	// 		bestLoss = newLoss
-	// 		bestWeights = cloneNetwork(layers)
-	// 	} else {
-	// 		// Revert to previous best
-	// 		restoreNetwork(layers, bestWeights)
-	// 	}
-
-	// 	// Occasionally print progress
-	// 	if iter%5000 == 0 {
-	// 		fmt.Printf("Iter %6d | Loss: %.6f | Best so far: %.6f\n",
-	// 			iter, newLoss, bestLoss)
-	// 	}
-	// }
 
 	fmt.Printf("\n🏁 Optimization completed.\n")
 	fmt.Printf("🔹 Best loss: %.6f\n", bestLoss)
@@ -124,42 +106,4 @@ func computeLoss(X [][]float64, y []int, layers []*nn.DenseLayer, af *nn.Activat
 	_ = af.SoftmaxInPlace(input)
 	loss, _ := lf.CategoricalCrossEntropy(input, y)
 	return loss
-}
-
-func perturbNetwork(layers []*nn.DenseLayer, scale float64) {
-	for _, layer := range layers {
-		for i := range layer.Weights {
-			for j := range layer.Weights[i] {
-				layer.Weights[i][j] += rand.NormFloat64() * scale
-			}
-		}
-		for i := range layer.Biases {
-			layer.Biases[i] += rand.NormFloat64() * scale
-		}
-	}
-}
-
-func cloneNetwork(layers []*nn.DenseLayer) []*nn.DenseLayer {
-	clone := make([]*nn.DenseLayer, len(layers))
-	for i, layer := range layers {
-		newLayer := &nn.DenseLayer{
-			Weights: make([][]float64, len(layer.Weights)),
-			Biases:  make([]float64, len(layer.Biases)),
-		}
-		for j := range layer.Weights {
-			newLayer.Weights[j] = append([]float64(nil), layer.Weights[j]...)
-		}
-		copy(newLayer.Biases, layer.Biases)
-		clone[i] = newLayer
-	}
-	return clone
-}
-
-func restoreNetwork(layers []*nn.DenseLayer, saved []*nn.DenseLayer) {
-	for i := range layers {
-		for j := range layers[i].Weights {
-			copy(layers[i].Weights[j], saved[i].Weights[j])
-		}
-		copy(layers[i].Biases, saved[i].Biases)
-	}
 }
